@@ -548,7 +548,6 @@ export def run-import-pass [
         get-resources $root_module
         | where resource_type in ($resources_map|columns) and address not-in $existing_resources
     )
-    $resources|save -f resources.json
 
     mut counter = 0
 
@@ -567,12 +566,13 @@ export def run-import-pass [
     return $counter
 }
 
-def main [
-    state_file: string = 'state.json' # path to the state file
-] {
+def main [] {
+    let state_file = $"(random chars -l 10).json"
+
     while (run-import-pass $state_file) > 0 {
         std log info "Resources were imported into the state, rerunning the process"
     }
+
     std log info "No more resources available for import"
 
 }
